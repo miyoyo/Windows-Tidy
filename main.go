@@ -15,6 +15,7 @@ func main() {
 		WingetCheck()
 	} else if os.Args[1] == "cleandotfiles" {
 		CleanDotfiles()
+	} else if os.Args[1] == "restarttwinkletray" {
+		RestartTwinkleTray()
 	}
-
 }

@@ -14,7 +14,6 @@ import (
 )
 
 func WingetCheck() {
-
 	ownHandle := windows.CurrentProcess()
 	err := windows.SetPriorityClass(ownHandle, 0x40)
 	if err != nil {
