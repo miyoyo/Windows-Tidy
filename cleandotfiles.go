@@ -35,7 +35,8 @@ func CleanDotfiles() {
 
 		i, _ := entry.Info()
 		q := i.Sys().(*syscall.Win32FileAttributeData)
-		if q.FileAttributes&0x00000400 == 0 && q.FileAttributes&0x00000010 != 0 {
+
+		if q.FileAttributes&0x00000400 == 0 {
 			count++
 			absolutePath, err := filepath.Abs(entry.Name())
 			if err != nil {
@@ -48,36 +49,18 @@ func CleanDotfiles() {
 				panic(err)
 			}
 
-			mklinkCommand := exec.Command("cmd", "/C", "mklink", "/J", absolutePath, `C:\Users\Hidden\AppData\DotFiles\`+entry.Name())
-			err = mklinkCommand.Run()
-			if err != nil {
-				panic(err)
-			}
-
-			attribCommand := exec.Command("cmd", "/C", "attrib", "/L", "+a", "+h", "+s", absolutePath)
-			err = attribCommand.Run()
-			if err != nil {
-				panic(err)
-			}
-		}
-
-		if q.FileAttributes&0x00000400 == 0 && q.FileAttributes&0x00000010 == 0 {
-			count++
-			absolutePath, err := filepath.Abs(entry.Name())
-			if err != nil {
-				panic(err)
-			}
-
-			moveCommand := exec.Command("cmd", "/C", "move", absolutePath, `C:\Users\Hidden\AppData\DotFiles\`+entry.Name())
-			err = moveCommand.Run()
-			if err != nil {
-				panic(err)
-			}
-
-			mklinkCommand := exec.Command("cmd", "/C", "mklink", absolutePath, `C:\Users\Hidden\AppData\DotFiles\`+entry.Name())
-			err = mklinkCommand.Run()
-			if err != nil {
-				panic(err)
+			if q.FileAttributes&0x00000010 == 0 {
+				mklinkCommand := exec.Command("cmd", "/C", "mklink", absolutePath, `C:\Users\Hidden\AppData\DotFiles\`+entry.Name())
+				err = mklinkCommand.Run()
+				if err != nil {
+					panic(err)
+				}
+			} else {
+				mklinkCommand := exec.Command("cmd", "/C", "mklink", "/J", absolutePath, `C:\Users\Hidden\AppData\DotFiles\`+entry.Name())
+				err = mklinkCommand.Run()
+				if err != nil {
+					panic(err)
+				}
 			}
 
 			attribCommand := exec.Command("cmd", "/C", "attrib", "/L", "+a", "+h", "+s", absolutePath)
